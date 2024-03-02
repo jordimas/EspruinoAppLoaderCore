@@ -61,7 +61,6 @@ function translateString(options, app, value) {
 function translateStringAndConvertToISOLatin(options, app, value) {
   translation = translateString(options, app, value);
   if (translation!==undefined) {
-    org = translation;
     // remap any chars that we don't think we can display in Espruino's
     // built in fonts.
     translation = Utils.convertStringToISOLatin(translation);
