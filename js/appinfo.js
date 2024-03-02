@@ -83,7 +83,7 @@ function translateJS(options, app, code) {
       previousString=previousString.replace("/*LANG*/","");
       let translation = translateStringAndConvertToISOLatin(options,app, tok.value);
       if (translation!==undefined) {
-         tokenString = toJSString(translation);
+        tokenString = toJSString(translation);
       }
     } else if (tok.str.startsWith("`")) {
       // it's a tempated String! scan all clauses inside it and re-run on the JS in those
