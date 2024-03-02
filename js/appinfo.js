@@ -58,6 +58,18 @@ function translateString(options, app, value) {
   return undefined; // no translation
 }
 
+function translateStringAndConvertToISOLatin(options, app, value) {
+  translation = translateString(options, app, value);
+  if (translation!==undefined) {
+    org = translation;
+    // remap any chars that we don't think we can display in Espruino's
+    // built in fonts.
+    translation = Utils.convertStringToISOLatin(translation);
+  }
+  return translation;
+}
+
+
 // Translate any strings in the app that are prefixed with /*LANG*/
 // see https://github.com/espruino/BangleApps/issues/136
 function translateJS(options, app, code) {
@@ -70,12 +82,9 @@ function translateJS(options, app, code) {
     let tokenString = code.substring(tok.startIdx, tok.endIdx);
     if (tok.type=="STRING" && previousString.includes("/*LANG*/")) {
       previousString=previousString.replace("/*LANG*/","");
-      let translation = translateString(options,app, tok.value);
+      let translation = translateStringAndConvertToISOLatin(options,app, tok.value);
       if (translation!==undefined) {
-        // remap any chars that we don't think we can display in Espruino's
-        // built in fonts.
-        translation = Utils.convertStringToISOLatin(translation);
-        tokenString = toJSString(translation);
+         tokenString = toJSString(translation);
       }
     } else if (tok.str.startsWith("`")) {
       // it's a tempated String! scan all clauses inside it and re-run on the JS in those
@@ -204,8 +213,8 @@ var AppInfo = {
       // translate app names
       if (options.language) {
         if (app.shortName)
-          app.shortName = translateString(options, app, app.shortName)||app.shortName;
-        app.name = translateString(options, app, app.name)||app.name;
+          app.shortName = translateStringAndConvertToISOLatin(options, app, app.shortName)||app.shortName;
+        app.name = translateStringAndConvertToISOLatin(options, app, app.name)||app.name;
       }
       // Load all files
       let appFiles = [].concat(
